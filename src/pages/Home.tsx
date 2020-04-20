@@ -17,6 +17,7 @@ import {
 import React, {useState} from 'react';
 import './Home.css';
 
+const axios = require('axios');
 const FileSaver = require('file-saver');
 
 const Home: React.FC = () => {
@@ -24,10 +25,25 @@ const Home: React.FC = () => {
     const [language, setLanguage] = useState<string>('es-es');
     const [fileName, setFileName] = useState<string>();
 
+    function b64toBlob(dataURI: string) {
+        var byteString = atob(dataURI.split(',')[1]);
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], {type: 'audio/mpeg'});
+    }
+
     const download = (text: string, lang: string, fileName: string) => {
         const replacedText = text.replace(/\s/g, '%20');
-        const url = `http://api.voicerss.org/?key=f8538537192c43bcb28d89955f9e5dfc&hl=${lang}&src=${replacedText}&c=mp3`;
-        FileSaver.saveAs(url, `${fileName ? fileName : replacedText}.mp3`);
+        const url = `https://api.voicerss.org/?key=f8538537192c43bcb28d89955f9e5dfc&hl=${lang}&src=${replacedText}&c=mp3&b64=true`;
+        axios.get(url).then((response: any) => {
+            return b64toBlob(response.data);
+        }).then((blob: any) => {
+            FileSaver.saveAs(blob, `${fileName ? fileName : replacedText}.mp3`);
+        });
     };
 
     return (
