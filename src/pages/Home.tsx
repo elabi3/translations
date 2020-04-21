@@ -38,7 +38,7 @@ const Home: React.FC = () => {
 
     const download = (text: string, lang: string, fileName: string) => {
         const replacedText = text.replace(/\s/g, '%20');
-        const url = `https://api.voicerss.org/?key=f8538537192c43bcb28d89955f9e5dfc&hl=${lang}&src=${replacedText}&c=mp3&b64=true`;
+        const url = `https://api.voicerss.org/?key=f8538537192c43bcb28d89955f9e5dfc&hl=${lang}&src=${replacedText}&c=mp3&b64=true&r=0`;
         axios.get(url).then((response: any) => {
             return b64toBlob(response.data);
         }).then((blob: any) => {
